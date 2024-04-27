@@ -1,0 +1,15 @@
+{
+  "name": "export-book",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "c332030",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.20.0"
+  }
+}

@@ -1,0 +1,17 @@
+
+= export book
+
+判断元素是否可见
+[source,shell]
+----
+
+window.getComputedStyle(document.querySelector('.t243689071')).display !== 'none'
+window.getComputedStyle(document.querySelector('.u476330070')).display !== 'none'
+
+document.querySelector('.t243689071').offsetParent !== null
+document.querySelector('.u476330070').offsetParent !== null
+
+document.querySelector('.t243689071').checkVisibility()
+document.querySelector('.u476330070').checkVisibility()
+
+----
