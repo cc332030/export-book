@@ -10,6 +10,5 @@
   "author": "c332030",
   "license": "ISC",
   "dependencies": {
-    "selenium-webdriver": "^4.20.0"
   }
 }
