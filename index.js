@@ -8,9 +8,9 @@
 
 const fs = require('fs')
 
-const cheerio = require('cheerio')
+const { JSDOM } = require('jsdom')
 
-const htmlDecoder = new TextDecoder("gbk");
+const htmlDecoder = new TextDecoder("utf-8");
 
 async function readHtml(url) {
     return fetch(url)
@@ -19,7 +19,7 @@ async function readHtml(url) {
 }
 
 const bookName = "大宋的智慧"
-const chapterUrl = "https://www.ddxs.com/dasongdezhihui/"
+const chapterUrl = "https://www.hetushu.com/book/115/index.html"
 
 function write(content, append) {
 
@@ -40,31 +40,14 @@ async function main() {
     write(bookName)
 
     const chapterHtml = await readHtml(chapterUrl)
-    const chapterCheerio = cheerio.load(chapterHtml)
 
-    const chapterEleArr = chapterCheerio('.centent li > a')
+    const dom = new JSDOM(chapterHtml)
 
-    for(const ele of chapterEleArr) {
+    const document = dom.window.document
 
-        const href = ele.attribs.href;
-        if(!href.endsWith('.html')) {
-            continue
-        }
+    const as = document.querySelectorAll('a');
 
-        write(`\n${ele.children[0].data}\n`, true)
-
-        const contentHtml = await readHtml(`${chapterUrl}${href}`)
-        const contentCheerio = cheerio.load(contentHtml)
-        write(contentCheerio.text(), true)
-
-        const tableDiv = contentCheerio(`table`)
-
-        const tableNextAll = tableDiv.nextAll();
-        write(text, true)
-
-    }
-
-    write(null, true)
+    as.forEach(a => console.debug(`${a.textContent}[${a.href}]`))
 
 }
 
