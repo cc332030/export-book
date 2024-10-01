@@ -5,26 +5,66 @@
  * @author c332030
  * @since 2024/4/26
  */
-const fs = require('fs');
-const {Builder, Browser, By} = require("selenium-webdriver");
+
+const fs = require('fs')
+
+const cheerio = require('cheerio')
+
+const htmlDecoder = new TextDecoder("gbk");
+
+async function readHtml(url) {
+    return fetch(url)
+        .then(res => res.arrayBuffer())
+        .then(buffer => htmlDecoder.decode(buffer))
+}
+
+const bookName = "大宋的智慧"
+const chapterUrl = "https://www.ddxs.com/dasongdezhihui/"
+
+function write(content, append) {
+
+    const option = {
+        flag: append ? 'a+' : 'w+'
+    }
+
+    if(null === content || undefined === content) {
+        content = ''
+    }
+
+    fs.writeFileSync(`d:/${bookName}.txt`, `\n${content}`, option)
+
+}
 
 async function main() {
 
-    const {Builder, Browser} = require('selenium-webdriver');
+    write(bookName)
 
-    const driver = await new Builder().forBrowser(Browser.CHROME).build();
-    await driver.get('https://www.hetushu.com/book/115/84227.html');
+    const chapterHtml = await readHtml(chapterUrl)
+    const chapterCheerio = cheerio.load(chapterHtml)
 
-    let header = await driver.findElement(By.id('content'));
-    // Captures the element screenshot
-    let encodedString = await header.takeScreenshot(true);
-    // save screenshot as below
-    await fs.writeFileSync('./image.png', encodedString, 'base64');
+    const chapterEleArr = chapterCheerio('.centent li > a')
 
-    // let text = await driver.findElement(By.id('content')).getText();
-    // console.log('text', text);
+    for(const ele of chapterEleArr) {
 
-    await driver.quit();
+        const href = ele.attribs.href;
+        if(!href.endsWith('.html')) {
+            continue
+        }
+
+        write(`\n${ele.children[0].data}\n`, true)
+
+        const contentHtml = await readHtml(`${chapterUrl}${href}`)
+        const contentCheerio = cheerio.load(contentHtml)
+        write(contentCheerio.text(), true)
+
+        const tableDiv = contentCheerio(`table`)
+
+        const tableNextAll = tableDiv.nextAll();
+        write(text, true)
+
+    }
+
+    write(null, true)
 
 }
 
